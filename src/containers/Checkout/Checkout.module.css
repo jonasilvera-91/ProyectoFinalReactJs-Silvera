@@ -1,0 +1,50 @@
+.wrapper {
+  padding: 16px;
+  max-width: 520px;
+}
+
+.form {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.total {
+  margin: 0;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.error {
+  margin: 0;
+  color: #b00020;
+}
+
+.btn {
+  padding: 10px;
+  border-radius: 8px;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  background: #888;
+  cursor: not-allowed;
+}
