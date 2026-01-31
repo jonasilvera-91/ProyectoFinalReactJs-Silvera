@@ -2,6 +2,9 @@ import styles from "./ItemDetail.module.css";
 import { formatPrice } from "../../utils/format";
 
 export default function ItemDetail({ product, children }) {
+
+   console.log("PRICE RAW:", product?.price, typeof product?.price);
+   
   return (
     <main className={styles.wrapper}>
       <div className={styles.card}>
@@ -24,4 +27,5 @@ export default function ItemDetail({ product, children }) {
       </div>
     </main>
   );
+  
 }
