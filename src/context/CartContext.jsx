@@ -1,55 +1,71 @@
-import { createContext, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 
 export const CartContext = createContext();
 
+const STORAGE_KEY = "pf_cart";
+
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]);
+  // 🔹 Cargar carrito desde localStorage al iniciar
+  const [cart, setCart] = useState(() => {
+    try {
+      const storedCart = localStorage.getItem(STORAGE_KEY);
+      return storedCart ? JSON.parse(storedCart) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  // Agregar producto al carrito (si existe, suma cantidad)
-  const addItem = (item, quantity) => {
+  // 🔹 Guardar carrito cada vez que cambia
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+  }, [cart]);
+
+  const addItem = (product, quantity) => {
     setCart((prev) => {
-      const exists = prev.find((p) => p.id === item.id);
+      const existing = prev.find((p) => p.id === product.id);
 
-      if (exists) {
+      if (existing) {
         return prev.map((p) =>
-          p.id === item.id
+          p.id === product.id
             ? { ...p, quantity: p.quantity + quantity }
             : p
         );
       }
 
-      return [...prev, { ...item, quantity }];
+      return [...prev, { ...product, quantity }];
     });
   };
 
-  // Remover un producto
   const removeItem = (id) => {
     setCart((prev) => prev.filter((p) => p.id !== id));
   };
 
-  // Vaciar carrito
-  const clearCart = () => setCart([]);
+  const clearCart = () => {
+    setCart([]);
+  };
 
-  // Total de unidades
   const totalUnits = useMemo(
     () => cart.reduce((acc, p) => acc + p.quantity, 0),
     [cart]
   );
 
-  // Total $
   const totalPrice = useMemo(
-    () => cart.reduce((acc, p) => acc + p.quantity * p.price, 0),
+    () => cart.reduce((acc, p) => acc + p.price * p.quantity, 0),
     [cart]
   );
 
-  const value = {
-    cart,
-    addItem,
-    removeItem,
-    clearCart,
-    totalUnits,
-    totalPrice,
-  };
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider
+      value={{
+        cart,
+        addItem,
+        removeItem,
+        clearCart,
+        totalUnits,
+        totalPrice,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
 }
