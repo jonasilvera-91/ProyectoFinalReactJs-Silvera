@@ -5,11 +5,11 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../services/firebase";
 import ItemDetail from "../../components/ItemDetail/ItemDetail";
 import ItemCount from "../../components/ItemCount/ItemCount";
+import Toast from "../../components/Toast/Toast";
 import { CartContext } from "../../context/CartContext";
 
 export default function ItemDetailContainer() {
   const { itemId } = useParams();
-
   const { addItem } = useContext(CartContext);
 
   const [product, setProduct] = useState(null);
@@ -19,10 +19,14 @@ export default function ItemDetailContainer() {
   // Para ocultar ItemCount luego de agregar
   const [added, setAdded] = useState(false);
 
+  // UX: toast al agregar
+  const [toast, setToast] = useState(false);
+
   useEffect(() => {
     setLoading(true);
     setNotFound(false);
-    setAdded(false); // si cambio de producto, vuelve a mostrar el contador
+    setAdded(false);
+    setToast(false);
 
     const docRef = doc(db, "products", itemId);
 
@@ -47,8 +51,12 @@ export default function ItemDetailContainer() {
   }, [itemId]);
 
   const handleAdd = (quantity) => {
-    // Guarda el producto en el carrito global
     addItem(product, quantity);
+
+    // Toast UX
+    setToast(true);
+    window.setTimeout(() => setToast(false), 1400);
+
     // Oculta el contador y muestra "Ir al carrito"
     setAdded(true);
   };
@@ -56,7 +64,7 @@ export default function ItemDetailContainer() {
   if (loading) {
     return (
       <main style={{ padding: 16 }}>
-        <p>Cargando producto...</p>
+        <p style={{ opacity: 0.8 }}>Cargando producto...</p>
       </main>
     );
   }
@@ -71,19 +79,19 @@ export default function ItemDetailContainer() {
   }
 
   return (
-    <ItemDetail product={product}>
-      {!added ? (
-        <ItemCount
-          stock={product.stock}
-          initial={1}
-          onAdd={handleAdd}
-        />
-      ) : (
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <Link to="/cart">Ir al carrito</Link>
-          <Link to="/">Seguir comprando</Link>
-        </div>
-      )}
-    </ItemDetail>
+    <>
+      <ItemDetail product={product}>
+        {!added ? (
+          <ItemCount stock={product.stock} initial={1} onAdd={handleAdd} />
+        ) : (
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            <Link to="/cart">Ir al carrito</Link>
+            <Link to="/">Seguir comprando</Link>
+          </div>
+        )}
+      </ItemDetail>
+
+      <Toast show={toast} message="✅ Producto agregado al carrito" />
+    </>
   );
 }
