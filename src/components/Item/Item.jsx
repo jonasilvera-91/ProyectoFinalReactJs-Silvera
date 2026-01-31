@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Item.module.css";
+import { formatPrice } from "../../utils/format";
 
 export default function Item({ product }) {
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -24,7 +25,7 @@ export default function Item({ product }) {
           onLoad={() => setImgLoaded(true)}
           onError={(e) => {
             e.currentTarget.src =
-              "https://via.placeholder.com/300?text=Sin+imagen";
+              "https://placehold.co/300x300?text=Sin+imagen";
             setImgLoaded(true);
           }}
         />
@@ -34,7 +35,7 @@ export default function Item({ product }) {
         {product.title || "(sin título)"}
       </h3>
 
-      <p className={styles.price}>${product.price}</p>
+      <p className={styles.price}>{formatPrice(product.price)}</p>
 
       <p className={styles.stock}>
         {product.stock > 0

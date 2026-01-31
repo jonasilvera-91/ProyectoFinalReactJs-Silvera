@@ -1,4 +1,5 @@
 import styles from "./ItemDetail.module.css";
+import { formatPrice } from "../../utils/format";
 
 export default function ItemDetail({ product, children }) {
   return (
@@ -12,7 +13,7 @@ export default function ItemDetail({ product, children }) {
           <h1 className={styles.title}>{product.title}</h1>
           <p className={styles.desc}>{product.description}</p>
 
-          <p className={styles.price}>${product.price}</p>
+          <p className={styles.price}>{formatPrice(product.price)}</p>
           <p className={styles.stock}>
             {product.stock > 0 ? `Stock: ${product.stock}` : "Sin stock"}
           </p>
